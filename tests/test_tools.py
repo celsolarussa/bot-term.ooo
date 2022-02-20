@@ -27,3 +27,14 @@ def test_send_letter_to_webelement(loaded_page):
     webelement = tools.find_element(locator)
     webelement.send_keys(letter)
     assert webelement.text == letter
+
+
+def test_send_webelement_return_attribute_aria_label_of_the_webelement(
+    loaded_page,
+):
+    expected = ''
+    locator = By.XPATH, '//*[@id="board"]/div[1]/div[1]'
+    tools = SeleniumTools(loaded_page)
+    webelement = tools.find_element(locator)
+    attribute = tools.get_webelement_attribute(webelement)
+    assert attribute == expected

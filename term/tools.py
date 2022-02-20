@@ -12,7 +12,7 @@ class SeleniumTools:
         self._driver = driver
 
     def wait_element_located(
-        self, time: int = 5, locator: Tuple[str, str] = None
+        self, time: float = 5.0, locator: Tuple[str, str] = None
     ) -> WebElement:
         return WebDriverWait(self._driver, time).until(
             EC.presence_of_element_located((locator))
@@ -34,6 +34,13 @@ class SeleniumTools:
         self, webelement: WebElement, attr_name: str = 'aria-label'
     ) -> str:
         return webelement.get_attribute(attr_name)
+
+    def wait_webelement_attribute(
+        self, time: float = 5.0, webelement: WebElement = None
+    ) -> str:
+        return WebDriverWait(self._driver, time).until(
+            lambda x: self.get_webelement_attribute(webelement)
+        )
 
 
 class Page(ABC):
