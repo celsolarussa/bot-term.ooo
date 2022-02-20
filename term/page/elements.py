@@ -17,6 +17,7 @@ class Term(SeleniumTools):
     div_rows = By.XPATH, '//*[@id="board"]/div'
     div_cells = By.XPATH, './div'
     button_enter = By.ID, 'kbd_enter'
+    div_message = By.ID, 'msg'
 
     def __init__(self, driver: Remote) -> None:
         super().__init__(driver)

@@ -50,7 +50,7 @@ class WrongLetter:
                 lambda x: x[position] != letter
                 and x.count(letter) == count_letter
             )
-        else:
+        elif letter in PATTERN_CORRECT:
             callable = (lambda x: x[position] != letter)
         WORDS_LIST = list(filter(callable, WORDS_LIST.copy()))
 
