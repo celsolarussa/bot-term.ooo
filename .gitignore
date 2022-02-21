@@ -1,6 +1,7 @@
+.pytest_cache
 .venv
 .vscode
 html
+result
 __pycache__
-.pytest_cache
-hist.txt
+logs.log

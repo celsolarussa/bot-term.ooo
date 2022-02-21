@@ -5,7 +5,7 @@ from selenium.webdriver import Remote
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from term.tools import Page, SeleniumTools
+from term.page.tools import Page, SeleniumTools
 
 
 class Row(BaseModel):
@@ -54,6 +54,6 @@ class Term(SeleniumTools):
 
     def get_webelements_attribute(self, webelements: List) -> List[str]:
         return [
-            self.wait_webelement_attribute(webelement=ele)
-            for ele in webelements
+            self.wait_webelement_attribute(webelement=webelement)
+            for webelement in webelements
         ]

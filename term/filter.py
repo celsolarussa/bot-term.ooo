@@ -1,17 +1,14 @@
+import logging
 import re
-from pathlib import Path
 from random import choice
 from typing import List
 
 from unidecode import unidecode
 
+from term import WORDS_FILE_DIR
 from term.utils import get_words_list
 
-PROJECT_DIR = Path('.').parent.resolve()
-words_file_path = PROJECT_DIR / 'words.txt'
-
-
-WORDS_LIST = get_words_list(words_file_path)
+WORDS_LIST = get_words_list(WORDS_FILE_DIR)
 PATTERN_CORRECT = [r'\w'] * 5
 ANOTHER_POSITION = []
 
@@ -23,6 +20,7 @@ class LetterCorrectPosition:
         PATTERN_CORRECT[position] = letter
         regex = re.compile(''.join(PATTERN_CORRECT))
         WORDS_LIST = list(filter(regex.match, WORDS_LIST.copy()))
+        logging.info(f'letter: {letter}, filtered: {WORDS_LIST}')
 
 
 class LetterAnotherPosition:
@@ -36,6 +34,7 @@ class LetterAnotherPosition:
                 WORDS_LIST.copy(),
             )
         )
+        logging.info(f'letter: {letter}, filtered: {WORDS_LIST}')
 
 
 class WrongLetter:
@@ -43,7 +42,7 @@ class WrongLetter:
         global PATTERN_CORRECT, ANOTHER_POSITION, WORDS_LIST
 
         if letter not in PATTERN_CORRECT and letter not in ANOTHER_POSITION:
-            callable = lambda x: letter not in x
+            callable = (lambda x: letter not in x)
         elif letter not in PATTERN_CORRECT and letter in ANOTHER_POSITION:
             count_letter = ANOTHER_POSITION.count(letter)
             callable = (
@@ -51,8 +50,9 @@ class WrongLetter:
                 and x.count(letter) == count_letter
             )
         elif letter in PATTERN_CORRECT:
-            callable = lambda x: x[position] != letter
+            callable = (lambda x: x[position] != letter)
         WORDS_LIST = list(filter(callable, WORDS_LIST.copy()))
+        logging.info(f'letter: {letter}, filtered: {WORDS_LIST}')
 
 
 class FilterFactory:
@@ -71,11 +71,12 @@ class Filter:
     def get_random_word(self) -> str:
         word = choice(WORDS_LIST)
         WORDS_LIST.remove(word)
+        logging.info(f'word: {word}')
         return word
 
     def get_letter_in_word(
         self, attribute: str, pattern: str = r'"(\w)"'
-    ) -> None:
+    ) -> str:
         return unidecode(re.search(pattern, attribute).groups()[0]).lower()
 
     def filter_words_list(self, attributes: List[str]) -> None:

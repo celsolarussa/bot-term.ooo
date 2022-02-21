@@ -1,8 +1,12 @@
+import logging
+import traceback
 from typing import List
 
+from term import ERROR_FOLDER_DIR, LOSE_FOLDER_DIR, WIN_FOLDER_DIR
 from term.filter import Filter
 from term.page.elements import Term
-from term.utils import get_driver
+from term.utils import (create_result_folders, get_driver,
+                        move_and_rename_log_files)
 
 
 class Win(Exception):
@@ -34,13 +38,26 @@ class Crawler:
             self.send_letters_in_cells(row.cells, list(word))
             self.page.confirm_word()
             attributes = self.page.get_webelements_attribute(row.cells)
-            filter.filter_words_list(attributes)
             self.check_win(attributes)
+            filter.filter_words_list(attributes)
         raise (Lose)
 
 
 if __name__ == '__main__':
-    driver = get_driver()
-    crawler = Crawler(Term(driver))
-    crawler.run()
-    driver.quit()
+    try:
+        create_result_folders()
+        driver = get_driver()
+        crawler = Crawler(Term(driver))
+        crawler.run()
+        driver.quit()
+    except Win:
+        print('Win!')
+        move_and_rename_log_files(WIN_FOLDER_DIR)
+    except Lose:
+        print('Lose!')
+        move_and_rename_log_files(LOSE_FOLDER_DIR)
+    except Exception:
+        logging.info(traceback.format_exc())
+        move_and_rename_log_files(ERROR_FOLDER_DIR)
+    finally:
+        driver.quit()

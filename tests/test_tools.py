@@ -1,7 +1,7 @@
 from selenium.webdriver import Remote
 from selenium.webdriver.common.by import By
 
-from term.tools import Page, SeleniumTools
+from term.page.tools import Page, SeleniumTools
 
 
 def test_send_driver_and_url_to_open_the_page(driver: Remote):

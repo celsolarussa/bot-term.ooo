@@ -1,5 +1,6 @@
-from term.page.elements import Term
 from selenium.webdriver.common.by import By
+
+from term.page.elements import Term
 
 
 def test_close_help_screen(driver):
