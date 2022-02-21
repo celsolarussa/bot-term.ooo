@@ -43,7 +43,7 @@ class WrongLetter:
         global PATTERN_CORRECT, ANOTHER_POSITION, WORDS_LIST
 
         if letter not in PATTERN_CORRECT and letter not in ANOTHER_POSITION:
-            callable = (lambda x: letter not in x)
+            callable = lambda x: letter not in x
         elif letter not in PATTERN_CORRECT and letter in ANOTHER_POSITION:
             count_letter = ANOTHER_POSITION.count(letter)
             callable = (
@@ -51,7 +51,7 @@ class WrongLetter:
                 and x.count(letter) == count_letter
             )
         elif letter in PATTERN_CORRECT:
-            callable = (lambda x: x[position] != letter)
+            callable = lambda x: x[position] != letter
         WORDS_LIST = list(filter(callable, WORDS_LIST.copy()))
 
 
@@ -71,7 +71,7 @@ class Filter:
     def get_random_word(self) -> str:
         word = choice(WORDS_LIST)
         WORDS_LIST.remove(word)
-        return list(word)
+        return word
 
     def get_letter_in_word(
         self, attribute: str, pattern: str = r'"(\w)"'

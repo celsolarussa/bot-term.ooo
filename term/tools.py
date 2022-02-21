@@ -1,7 +1,8 @@
 from abc import ABC
-from typing import Tuple
+from typing import List, Tuple
 
 from selenium.webdriver import Remote
+from selenium.webdriver.remote.shadowroot import ShadowRoot
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -18,15 +19,25 @@ class SeleniumTools:
             EC.presence_of_element_located((locator))
         )
 
+    def find_shadow_in_webelement(self, webelement: WebElement) -> ShadowRoot:
+        script = 'return arguments[0].shadowRoot'
+        return self._driver.execute_script(script, webelement)
+
     def find_element(self, locator: Tuple[str, str]) -> WebElement:
         return self._driver.find_element(*locator)
 
-    def find_elements(self, locator: Tuple[str, str]) -> WebElement:
+    def find_elements(self, locator: Tuple[str, str]) -> List[WebElement]:
         return self._driver.find_elements(*locator)
+
+    def find_element_in_webelement(
+        self, webelement: WebElement, locator: Tuple[str, str]
+    ) -> WebElement:
+        new_webelement = webelement.find_element(*locator)
+        return new_webelement
 
     def find_elements_in_webelements(
         self, webelement: WebElement, locator: Tuple[str, str]
-    ) -> WebElement:
+    ) -> List[WebElement]:
         new_webelement = webelement.find_elements(*locator)
         return new_webelement
 

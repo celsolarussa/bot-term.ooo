@@ -3,6 +3,7 @@ from typing import List
 from pydantic import BaseModel
 from selenium.webdriver import Remote
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement
 
 from term.tools import Page, SeleniumTools
 
@@ -14,9 +15,11 @@ class Row(BaseModel):
 class Term(SeleniumTools):
     url = 'https://term.ooo/'
     div_help_locator = By.ID, 'help'
-    div_rows = By.XPATH, '//*[@id="board"]/div'
-    div_cells = By.XPATH, './div'
-    button_enter = By.ID, 'kbd_enter'
+    wc_board = By.XPATH, '/html/body/main/wc-board'
+    wc_rows = By.CSS_SELECTOR, 'wc-row'
+    div_letters = By.CSS_SELECTOR, 'div'
+    wc_keyboard = By.XPATH, '/html/body/wc-kbd'
+    keyboard_enter = By.CSS_SELECTOR, '#kbd_enter'
     div_message = By.ID, 'msg'
 
     def __init__(self, driver: Remote) -> None:
@@ -27,15 +30,27 @@ class Term(SeleniumTools):
     def close_help_screen(self) -> None:
         self.wait_element_located(locator=self.div_help_locator).click()
 
-    def get_table_rows(self) -> List[Row]:
-        webelements = self.find_elements(self.div_rows)
-        return [
-            Row(cells=self.find_elements_in_webelements(i, self.div_cells))
-            for i in webelements
-        ]
+    def get_rows(self) -> List[WebElement]:
+        webelement = self.find_element(self.wc_board)
+        shadow_wc_board = self.find_shadow_in_webelement(webelement)
+        return self.find_elements_in_webelements(shadow_wc_board, self.wc_rows)
+
+    def get_cells(self, row: WebElement) -> List[WebElement]:
+        shadow_wc_rows = self.find_shadow_in_webelement(row)
+        return self.find_elements_in_webelements(
+            shadow_wc_rows, self.div_letters
+        )
+
+    def get_rows_with_cells(self) -> List[Row]:
+        rows = self.get_rows()
+        return [Row(cells=self.get_cells(row)) for row in rows]
 
     def confirm_word(self) -> None:
-        self.find_element(self.button_enter).click()
+        webelement = self.find_element(self.wc_keyboard)
+        shadow_wc_keyboard = self.find_shadow_in_webelement(webelement)
+        self.find_element_in_webelement(
+            shadow_wc_keyboard, self.keyboard_enter
+        ).click()
 
     def get_webelements_attribute(self, webelements: List) -> List[str]:
         return [

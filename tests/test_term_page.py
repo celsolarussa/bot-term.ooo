@@ -1,4 +1,5 @@
 from term.page.elements import Term
+from selenium.webdriver.common.by import By
 
 
 def test_close_help_screen(driver):
@@ -6,8 +7,27 @@ def test_close_help_screen(driver):
     assert page
 
 
-def test_return_all_cells_from_table(driver):
+def test_get_all_rows_from_page(driver):
     expected = 6
     page = Term(driver)
-    cells = page.get_table_cells()
+    rows = page.get_rows()
+    assert len(rows) == expected
+
+
+def test_get_all_cells_in_row_from_page(driver):
+    expected = 5
+    div_letters = By.CSS_SELECTOR, 'div'
+
+    page = Term(driver)
+    row = page.get_rows()[0]
+    shadow_wc_rows = page.find_shadow_in_webelement(row)
+    cells = page.find_elements_in_webelements(shadow_wc_rows, div_letters)
     assert len(cells) == expected
+
+
+def test_get_rows_with_cells_from_page(driver):
+    expected = 6
+
+    page = Term(driver)
+    rows = page.get_rows_with_cells()
+    assert len(rows) == expected
