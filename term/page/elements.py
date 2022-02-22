@@ -1,15 +1,11 @@
 from typing import List
+from time import sleep
 
-from pydantic import BaseModel
 from selenium.webdriver import Remote
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
 from term.page.tools import Page, SeleniumTools
-
-
-class Row(BaseModel):
-    cells: list
 
 
 class Term(SeleniumTools):
@@ -41,10 +37,6 @@ class Term(SeleniumTools):
             shadow_wc_rows, self.div_letters
         )
 
-    def get_rows_with_cells(self) -> List[Row]:
-        rows = self.get_rows()
-        return [Row(cells=self.get_cells(row)) for row in rows]
-
     def confirm_word(self) -> None:
         webelement = self.find_element(self.wc_keyboard)
         shadow_wc_keyboard = self.find_shadow_in_webelement(webelement)
@@ -52,8 +44,8 @@ class Term(SeleniumTools):
             shadow_wc_keyboard, self.keyboard_enter
         ).click()
 
-    def get_webelements_attribute(self, webelements: List) -> List[str]:
+    def get_webelements_attribute(self, cells: List) -> List[str]:
+        sleep(0.3)
         return [
-            self.wait_webelement_attribute(webelement=webelement)
-            for webelement in webelements
+            self.wait_webelement_attribute(webelement=cell) for cell in cells
         ]

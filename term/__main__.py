@@ -1,20 +1,17 @@
+from bdb import BdbQuit
 import logging
 import traceback
 from typing import List
 
 from term import ERROR_FOLDER_DIR, LOSE_FOLDER_DIR, WIN_FOLDER_DIR
+from term.exceptions import Lose, Win
 from term.filter import Filter
 from term.page.elements import Term
-from term.utils import (create_result_folders, get_driver,
-                        move_and_rename_log_files)
-
-
-class Win(Exception):
-    ...
-
-
-class Lose(Exception):
-    ...
+from term.utils import (
+    create_result_folders,
+    get_driver,
+    move_and_rename_log_files,
+)
 
 
 class Crawler:
@@ -28,19 +25,20 @@ class Crawler:
         for attribute in attributes:
             if 'correta' not in attribute:
                 return
-        raise (Win)
+        raise Win()
 
     def run(self):
-        rows = self.page.get_rows_with_cells()
+        rows = self.page.get_rows()
         filter = Filter()
         for row in rows:
             word = filter.get_random_word()
-            self.send_letters_in_cells(row.cells, list(word))
+            cells = self.page.get_cells(row)
+            self.send_letters_in_cells(cells, list(word))
             self.page.confirm_word()
-            attributes = self.page.get_webelements_attribute(row.cells)
+            attributes = self.page.get_webelements_attribute(cells)
             self.check_win(attributes)
             filter.filter_words_list(attributes)
-        raise (Lose)
+        raise Lose()
 
 
 if __name__ == '__main__':
@@ -50,6 +48,8 @@ if __name__ == '__main__':
         crawler = Crawler(Term(driver))
         crawler.run()
         driver.quit()
+    except BdbQuit:
+        pass
     except Win:
         print('Win!')
         move_and_rename_log_files(WIN_FOLDER_DIR)
@@ -57,6 +57,7 @@ if __name__ == '__main__':
         print('Lose!')
         move_and_rename_log_files(LOSE_FOLDER_DIR)
     except Exception:
+        print('Error!')
         logging.info(traceback.format_exc())
         move_and_rename_log_files(ERROR_FOLDER_DIR)
     finally:

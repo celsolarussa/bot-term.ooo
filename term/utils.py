@@ -6,12 +6,17 @@ from typing import List
 from selenium.webdriver import Remote
 from selenium.webdriver.chrome.options import Options
 
-from term import (ERROR_FOLDER_DIR, LOG_FILE_DIR, LOSE_FOLDER_DIR,
-                  RESULT_FOLDER_DIR, WIN_FOLDER_DIR)
+from term import (
+    ERROR_FOLDER_DIR,
+    LOG_FILE_DIR,
+    LOSE_FOLDER_DIR,
+    RESULT_FOLDER_DIR,
+    WIN_FOLDER_DIR,
+)
 
 logging.basicConfig(
     format='%(asctime)s::%(message)s',
-    datefmt='%m/%d/%Y %I:%M:%S',
+    datefmt='%d/%m/%Y %I:%M:%S',
     filename='logs.log',
     filemode='w',
     level=logging.INFO,
@@ -42,6 +47,6 @@ def create_result_folders():
 
 def move_and_rename_log_files(destinaton_path: Path):
     logging.shutdown()
-    log_name = datetime.now().strftime('%d%m%Y%H%S%M') + '.log'
+    log_name = datetime.now().strftime('%d%m%Y%H%M%S') + '.log'
     new_log_path = destinaton_path / log_name
     LOG_FILE_DIR.rename(new_log_path)
