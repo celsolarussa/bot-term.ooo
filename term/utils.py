@@ -3,8 +3,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import List
 
-from selenium.webdriver import Remote
+from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 
 from term import (
     ERROR_FOLDER_DIR,
@@ -32,9 +33,7 @@ def get_words_list(file_path: Path) -> List[str]:
 def get_driver():
     options = Options()
     options.add_argument('--start-maximized')
-    driver = Remote(
-        command_executor='http://127.0.0.1:4444/wd/hub', options=options
-    )
+    driver = Chrome(ChromeDriverManager().install(), options=options)
     return driver
 
 
