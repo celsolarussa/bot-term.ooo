@@ -11,11 +11,11 @@ The game history is inside the `result` folder.
 ```
 pip install -r requirements.txt
 ```
-## Run application
+## Run
 ```
 python -m term
 ```
-## Run tests
+## Tests
 ```
 pytest
 ```
