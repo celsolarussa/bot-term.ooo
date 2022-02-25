@@ -8,8 +8,11 @@ from term import ERROR_FOLDER_DIR, LOSE_FOLDER_DIR, WIN_FOLDER_DIR
 from term.exceptions import Lose, Win
 from term.filter import Filter
 from term.page.elements import Cell, Term
-from term.utils import (create_result_folders, get_driver,
-                        move_and_rename_log_files)
+from term.utils import (
+    create_result_folders,
+    get_driver,
+    move_and_rename_log_files,
+)
 
 
 class Crawler:
@@ -28,12 +31,8 @@ class Crawler:
     def run(self):
         rows = self.page.get_rows()
         filter = Filter()
-        count = 0
         for row in rows:
             word = filter.get_random_word()
-            if count == 0:
-                word = 'tiito'
-                count += 1
             cells = self.page.get_cells(row)
             self.send_letters_in_cells(cells, list(word))
             self.page.confirm_word()

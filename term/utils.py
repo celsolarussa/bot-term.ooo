@@ -7,8 +7,13 @@ from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
-from term import (ERROR_FOLDER_DIR, LOG_FILE_DIR, LOSE_FOLDER_DIR,
-                  RESULT_FOLDER_DIR, WIN_FOLDER_DIR)
+from term import (
+    ERROR_FOLDER_DIR,
+    LOG_FILE_DIR,
+    LOSE_FOLDER_DIR,
+    RESULT_FOLDER_DIR,
+    WIN_FOLDER_DIR,
+)
 
 logging.basicConfig(
     format='%(asctime)s::%(message)s',
