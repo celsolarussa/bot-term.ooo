@@ -7,13 +7,8 @@ from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
-from term import (
-    ERROR_FOLDER_DIR,
-    LOG_FILE_DIR,
-    LOSE_FOLDER_DIR,
-    RESULT_FOLDER_DIR,
-    WIN_FOLDER_DIR,
-)
+from term import (ERROR_FOLDER_DIR, LOG_FILE_DIR, LOSE_FOLDER_DIR,
+                  RESULT_FOLDER_DIR, WIN_FOLDER_DIR)
 
 logging.basicConfig(
     format='%(asctime)s::%(message)s',
@@ -33,6 +28,7 @@ def get_words_list(file_path: Path) -> List[str]:
 def get_driver():
     options = Options()
     options.add_argument('--start-maximized')
+    options.add_argument('--log-level=3')
     driver = Chrome(
         ChromeDriverManager(log_level=logging.WARNING).install(),
         options=options,

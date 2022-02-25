@@ -1,7 +1,7 @@
-from typing import List
 from time import sleep
-from pydantic import BaseModel
+from typing import List
 
+from pydantic import BaseModel
 from selenium.webdriver import Remote
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
