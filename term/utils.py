@@ -33,7 +33,10 @@ def get_words_list(file_path: Path) -> List[str]:
 def get_driver():
     options = Options()
     options.add_argument('--start-maximized')
-    driver = Chrome(ChromeDriverManager().install(), options=options)
+    driver = Chrome(
+        ChromeDriverManager(log_level=logging.WARNING).install(),
+        options=options,
+    )
     return driver
 
 

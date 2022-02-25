@@ -1,11 +1,20 @@
 from typing import List
 from time import sleep
+from pydantic import BaseModel
 
 from selenium.webdriver import Remote
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
 from term.page.tools import Page, SeleniumTools
+
+
+class Cell(BaseModel):
+    result: str
+    position: int
+
+    def __lt__(self, other):
+        return tuple(self.dict().values()) < tuple(other.dict().values())
 
 
 class Term(SeleniumTools):
@@ -47,5 +56,13 @@ class Term(SeleniumTools):
     def get_webelements_attribute(self, cells: List) -> List[str]:
         sleep(0.3)
         return [
-            self.wait_webelement_attribute(webelement=cell) for cell in cells
+            Cell(
+                result=self.wait_webelement_attribute(
+                    webelement=cell, attr_name='aria-label'
+                ),
+                position=self.wait_webelement_attribute(
+                    webelement=cell, attr_name='termo-pos'
+                ),
+            )
+            for cell in cells
         ]

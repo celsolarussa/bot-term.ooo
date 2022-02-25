@@ -42,15 +42,18 @@ class SeleniumTools:
         return new_webelement
 
     def get_webelement_attribute(
-        self, webelement: WebElement, attr_name: str = 'aria-label'
+        self, webelement: WebElement, attr_name: str
     ) -> str:
         return webelement.get_attribute(attr_name)
 
     def wait_webelement_attribute(
-        self, time: float = 5.0, webelement: WebElement = None
+        self,
+        time: float = 5.0,
+        webelement: WebElement = None,
+        attr_name: str = None,
     ) -> str:
         return WebDriverWait(self._driver, time).until(
-            lambda x: self.get_webelement_attribute(webelement)
+            lambda x: self.get_webelement_attribute(webelement, attr_name)
         )
 
 

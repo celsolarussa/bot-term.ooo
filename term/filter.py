@@ -7,6 +7,7 @@ from unidecode import unidecode
 
 from term import WORDS_FILE_DIR
 from term.exceptions import FilterError
+from term.page.elements import Cell
 from term.utils import get_words_list
 
 WORDS_LIST = get_words_list(WORDS_FILE_DIR)
@@ -93,9 +94,11 @@ class Filter:
     ) -> str:
         return unidecode(re.search(pattern, attribute).groups()[0]).lower()
 
-    def filter_words_list(self, attributes: List[str]) -> None:
+    def filter_words_list(self, attributes: List[Cell]) -> None:
+        attributes.sort()
         for attribute in attributes:
-            position = attributes.index(attribute)
-            letter = self.get_letter_in_word(attribute)
-            filter_type = attribute.split(' ')[-1]
+            result = attribute.result
+            position = attribute.position
+            letter = self.get_letter_in_word(result)
+            filter_type = result.split(' ')[-1]
             FilterFactory.generate(filter_type).filtrate(position, letter)
