@@ -5,6 +5,7 @@ from typing import List
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 from term import (
@@ -34,8 +35,9 @@ def get_driver():
     options = Options()
     options.add_argument('--start-maximized')
     options.add_argument('--log-level=3')
+    service = Service(ChromeDriverManager(log_level=logging.WARNING).install())
     driver = Chrome(
-        ChromeDriverManager(log_level=logging.WARNING).install(),
+        service=service,
         options=options,
     )
     return driver

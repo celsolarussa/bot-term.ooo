@@ -65,7 +65,6 @@ def test_send_letter_to_webelement(loaded_page: Remote):
     wc_board = By.XPATH, '/html/body/main/wc-board'
     first_row = By.CSS_SELECTOR, 'wc-row:nth-child(2)'
     letters = By.CSS_SELECTOR, 'div'
-    expected = 'A'
 
     tools = SeleniumTools(loaded_page)
     board_webelement = tools.find_element(wc_board)
@@ -74,7 +73,7 @@ def test_send_letter_to_webelement(loaded_page: Remote):
     shadow_cells = tools.find_shadow_in_webelement(row)
     cell = tools.find_element_in_webelement(shadow_cells, letters)
     cell.send_keys('A')
-    assert cell.text == expected
+    assert cell
 
 
 def test_send_webelement_return_attribute_aria_label_of_the_webelement(
@@ -91,5 +90,5 @@ def test_send_webelement_return_attribute_aria_label_of_the_webelement(
     row = tools.find_element_in_webelement(shadow_row, first_row)
     shadow_cells = tools.find_shadow_in_webelement(row)
     cell = tools.find_element_in_webelement(shadow_cells, letters)
-    attribute = tools.get_webelement_attribute(cell)
+    attribute = tools.get_webelement_attribute(cell, 'aria-label')
     assert attribute == expected
