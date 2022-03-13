@@ -53,15 +53,15 @@ if __name__ == '__main__':
     except Win:
         print('Win!')
         move_and_rename_log_files(WIN_FOLDER_DIR)
-        os.system('pause')
+        input('Send any letter to exit \n')
     except Lose:
         print('Lose!')
         move_and_rename_log_files(LOSE_FOLDER_DIR)
-        os.system('pause')
+        input('Send any letter to exit \n')
     except Exception:
         print('Error!')
         logging.info(traceback.format_exc())
         move_and_rename_log_files(ERROR_FOLDER_DIR)
-        os.system('pause')
+        input('Send any letter to exit \n')
     finally:
         driver.quit()
