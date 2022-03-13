@@ -31,7 +31,9 @@ class LetterAnotherPosition:
     def filtrate(self, position: int, letter: str) -> None:
         global ANOTHER_POSITION, WORDS_LIST
 
-        ANOTHER_POSITION.append(letter)
+        ANOTHER_POSITION.append(
+            letter
+        ) if letter not in ANOTHER_POSITION else None
         WORDS_LIST = list(
             filter(
                 lambda x: letter in x and x[position] != letter,
