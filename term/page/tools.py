@@ -48,7 +48,7 @@ class SeleniumTools:
 
     def wait_webelement_attribute(
         self,
-        time: float = 5.0,
+        time: float = 10.0,
         webelement: WebElement = None,
         attr_name: str = None,
     ) -> str:
