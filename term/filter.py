@@ -10,15 +10,16 @@ from term.page.elements import Cell
 
 
 class LetterCorrectPosition:
+    @classmethod
     def filtrate(
-        self,
+        cls,
         position: int,
         letter: str,
         words_list: List[str],
         pattern_correct: List[str],
         another_position: List[str],
         logger: logging,
-    ) -> None:
+    ) -> tuple[list[str], list[str], list[str]]:
         pattern_correct[position] = letter
         regex = re.compile(''.join(pattern_correct))
         words_list = list(filter(regex.match, words_list.copy()))
@@ -27,15 +28,16 @@ class LetterCorrectPosition:
 
 
 class LetterAnotherPosition:
+    @classmethod
     def filtrate(
-        self,
+        cls,
         position: int,
         letter: str,
         words_list: List[str],
         pattern_correct: List[str],
         another_position: List[str],
         logger: logging,
-    ) -> None:
+    ) -> tuple[list[str], list[str], list[str]]:
         # another_position[position] = letter
         another_position.append(
             letter
@@ -53,15 +55,16 @@ class LetterAnotherPosition:
 
 
 class WrongLetter:
+    @classmethod
     def filtrate(
-        self,
+        cls,
         position: int,
         letter: str,
         words_list: List[str],
         pattern_correct: List[str],
         another_position: List[str],
         logger: logging,
-    ) -> None:
+    ) -> tuple[list[str], list[str], list[str]]:
         if letter not in pattern_correct and letter not in another_position:
             words_list = list(
                 filter(lambda x: letter not in x, words_list.copy())
@@ -95,7 +98,7 @@ class FilterFactory:
     }
 
     @staticmethod
-    def generate(filter_type: str) -> object:
+    def generate(filter_type: str) -> LetterCorrectPosition | LetterAnotherPosition | WrongLetter:
         return FilterFactory.type[filter_type]()
 
 
@@ -106,25 +109,33 @@ class Filter:
         self.pattern_correct = [r'\w'] * 5
         self.another_position = []
 
+    @classmethod
+    def check_duplicates_letters_in_word(cls, word: str) -> bool:
+        for letter in word:
+            if word.count(letter) > 1:
+                return True
+        return False
+
+    def get_popular_words(self, words_list: List[str]) -> List[str]:
+        return [i for i in words_list if self.check_duplicates_letters_in_word(i)]
+            
     def get_random_word(self) -> str:
         if not self.words_list:
             raise FilterError()
-        word_list = (
-            [i for i in self.words_list.copy() if 'a' in i]
-            if len(self.words_list) == 10586
-            else self.words_list
-        )
-        word = choice(word_list)
+        word = choice(self.words_list)
         self.words_list.remove(word)
         return word
 
+    @classmethod
     def get_letter_in_word(
-        self, attribute: str, pattern: str = r'"(\w)"'
+        cls, attribute: str, pattern: str = r'"(\w)"'
     ) -> str:
         return unidecode(re.search(pattern, attribute).groups()[0]).lower()
 
     def filter_words_list(self, attributes: List[Cell]) -> None:
-        attributes.sort()
+        # attributes.sort()
+        choice_word = ''.join([cell.result[7] for cell in attributes])
+        self.logger.info(f'Word: {choice_word}')
         for attribute in attributes:
             result = attribute.result
             position = attribute.position
