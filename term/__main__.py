@@ -78,17 +78,18 @@ class BoardWebElement:
 class Crawler:
     def __init__(self, page_elements: Term) -> None:
         self.page = page_elements
+        self.url_page = 'https://term.ooo/4'
 
     def run(self):
-        Page.open(driver, self.page.url)
+        Page.open(driver, self.url_page)
         self.page.close_help_screen()
         list_boards = self.page.get_boards()
         board_instances = [
             BoardWebElement(self.page, board, board_number)
             for board_number, board in enumerate(list_boards)
         ]
-
-        for i in range(9):
+        row = self.page.get_rows(board_instances[-1].board)
+        for i in range(len(row)):
             board = min(board_instances)
             board.send_letters_in_cells()
             [board.filter_words_list() for board in board_instances]
