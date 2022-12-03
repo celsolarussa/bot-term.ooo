@@ -4,4 +4,6 @@
 html
 result
 __pycache__
-logs.log
+logs
+notes.txt
+.idea

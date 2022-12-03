@@ -16,7 +16,7 @@ class SeleniumTools:
         self, time: float = 5.0, locator: Tuple[str, str] = None
     ) -> WebElement:
         return WebDriverWait(self._driver, time).until(
-            EC.presence_of_element_located((locator))
+            EC.presence_of_element_located(locator)
         )
 
     def find_shadow_in_webelement(self, webelement: WebElement) -> ShadowRoot:
@@ -29,26 +29,29 @@ class SeleniumTools:
     def find_elements(self, locator: Tuple[str, str]) -> List[WebElement]:
         return self._driver.find_elements(*locator)
 
+    @classmethod
     def find_element_in_webelement(
-        self, webelement: WebElement, locator: Tuple[str, str]
+        cls, webelement: WebElement, locator: Tuple[str, str]
     ) -> WebElement:
         new_webelement = webelement.find_element(*locator)
         return new_webelement
 
+    @classmethod
     def find_elements_in_webelements(
-        self, webelement: WebElement, locator: Tuple[str, str]
+        cls, webelement: WebElement, locator: Tuple[str, str]
     ) -> List[WebElement]:
         new_webelement = webelement.find_elements(*locator)
         return new_webelement
 
+    @classmethod
     def get_webelement_attribute(
-        self, webelement: WebElement, attr_name: str
+        cls, webelement: WebElement, attr_name: str
     ) -> str:
         return webelement.get_attribute(attr_name)
 
     def wait_webelement_attribute(
         self,
-        time: float = 5.0,
+        time: float = 10.0,
         webelement: WebElement = None,
         attr_name: str = None,
     ) -> str:

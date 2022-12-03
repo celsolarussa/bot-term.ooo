@@ -5,64 +5,89 @@ from typing import List
 
 from unidecode import unidecode
 
-from term import WORDS_FILE_DIR
 from term.exceptions import FilterError
 from term.page.elements import Cell
-from term.utils import get_words_list
-
-WORDS_LIST = get_words_list(WORDS_FILE_DIR)
-PATTERN_CORRECT = [r'\w'] * 5
-ANOTHER_POSITION = []
 
 
 class LetterCorrectPosition:
-    def filtrate(self, position: int, letter: str) -> None:
-        global PATTERN_CORRECT, WORDS_LIST
-
-        PATTERN_CORRECT[position] = letter
-        regex = re.compile(''.join(PATTERN_CORRECT))
-        WORDS_LIST = list(filter(regex.match, WORDS_LIST.copy()))
-        logging.info(
-            f'letter: {letter}, type: correct, filtered: {WORDS_LIST}'
-        )
+    @classmethod
+    def filtrate(
+        cls,
+        position: int,
+        letter: str,
+        words_list: List[str],
+        pattern_correct: List[str],
+        another_position: List[str],
+        logger: logging,
+    ) -> tuple[list[str], list[str], list[str]]:
+        pattern_correct[position] = letter
+        regex = re.compile(''.join(pattern_correct))
+        words_list = list(filter(regex.match, words_list.copy()))
+        logger.info(f'letter: {letter}, type: correct, filtered: {words_list}')
+        return words_list, pattern_correct, another_position
 
 
 class LetterAnotherPosition:
-    def filtrate(self, position: int, letter: str) -> None:
-        global ANOTHER_POSITION, WORDS_LIST
-
-        ANOTHER_POSITION.append(
+    @classmethod
+    def filtrate(
+        cls,
+        position: int,
+        letter: str,
+        words_list: List[str],
+        pattern_correct: List[str],
+        another_position: List[str],
+        logger: logging,
+    ) -> tuple[list[str], list[str], list[str]]:
+        # another_position[position] = letter
+        another_position.append(
             letter
-        ) if letter not in ANOTHER_POSITION else None
-        WORDS_LIST = list(
+        ) if letter not in another_position else None
+        words_list = list(
             filter(
                 lambda x: letter in x and x[position] != letter,
-                WORDS_LIST.copy(),
+                words_list.copy(),
             )
         )
-        logging.info(
-            f'letter: {letter}, type: another position, filtered: {WORDS_LIST}'
+        logger.info(
+            f'letter: {letter}, type: another position, filtered: {words_list}'
         )
+        return words_list, pattern_correct, another_position
 
 
 class WrongLetter:
-    def filtrate(self, position: int, letter: str) -> None:
-        global PATTERN_CORRECT, ANOTHER_POSITION, WORDS_LIST
-
-        if letter not in PATTERN_CORRECT and letter not in ANOTHER_POSITION:
-            callable = lambda x: letter not in x
-        elif letter not in PATTERN_CORRECT and letter in ANOTHER_POSITION:
-            count_letter = ANOTHER_POSITION.count(letter)
-            callable = (
-                lambda x: x[position] != letter
-                and x.count(letter) == count_letter
+    @classmethod
+    def filtrate(
+        cls,
+        position: int,
+        letter: str,
+        words_list: List[str],
+        pattern_correct: List[str],
+        another_position: List[str],
+        logger: logging,
+    ) -> tuple[list[str], list[str], list[str]]:
+        if letter not in pattern_correct and letter not in another_position:
+            words_list = list(
+                filter(lambda x: letter not in x, words_list.copy())
             )
-        elif letter in PATTERN_CORRECT:
-            callable = lambda x: x[position] != letter
-        WORDS_LIST = list(filter(callable, WORDS_LIST.copy()))
-        logging.info(
-            f'letter: {letter}, type: wrong letter, filtered: {WORDS_LIST}'
+        elif letter not in pattern_correct and letter in another_position:
+            # possibilidade de conter mais de um elemento dentro da lista
+            # de another position, usar dict[position, value]
+            count_letter = another_position.count(letter)
+            words_list = list(
+                filter(
+                    lambda x: x[position] != letter
+                    and x.count(letter) == count_letter,
+                    words_list.copy(),
+                )
+            )
+        elif letter in pattern_correct:
+            words_list = list(
+                filter(lambda x: x[position] != letter, words_list.copy())
+            )
+        logger.info(
+            f'letter: {letter}, type: wrong letter, filtered: {words_list}'
         )
+        return words_list, pattern_correct, another_position
 
 
 class FilterFactory:
@@ -73,34 +98,62 @@ class FilterFactory:
     }
 
     @staticmethod
-    def generate(filter_type: str) -> object:
+    def generate(
+        filter_type: str,
+    ) -> LetterCorrectPosition | LetterAnotherPosition | WrongLetter:
         return FilterFactory.type[filter_type]()
 
 
 class Filter:
+    def __init__(self, words_list: List[str], logger: logging) -> None:
+        self.words_list = words_list
+        self.logger = logger
+        self.pattern_correct = [r'\w'] * 5
+        self.another_position = []
+
+    @classmethod
+    def check_duplicates_letters_in_word(cls, word: str) -> bool:
+        for letter in word:
+            if word.count(letter) > 1:
+                return True
+        return False
+
+    def get_popular_words(self, words_list: List[str]) -> List[str]:
+        return [
+            i for i in words_list if self.check_duplicates_letters_in_word(i)
+        ]
+
     def get_random_word(self) -> str:
-        if not WORDS_LIST:
+        if not self.words_list:
             raise FilterError()
-        word_list = (
-            [i for i in WORDS_LIST.copy() if 'a' in i]
-            if len(WORDS_LIST) == 10586
-            else WORDS_LIST
-        )
-        word = choice(word_list)
-        WORDS_LIST.remove(word)
-        logging.info(f'word: {word}')
+        word = choice(self.words_list)
+        self.words_list.remove(word)
         return word
 
+    @classmethod
     def get_letter_in_word(
-        self, attribute: str, pattern: str = r'"(\w)"'
+        cls, attribute: str, pattern: str = r'"(\w)"'
     ) -> str:
         return unidecode(re.search(pattern, attribute).groups()[0]).lower()
 
     def filter_words_list(self, attributes: List[Cell]) -> None:
-        attributes.sort()
+        # attributes.sort()
+        choice_word = ''.join([cell.result[7] for cell in attributes])
+        self.logger.info(f'Word: {choice_word}')
         for attribute in attributes:
             result = attribute.result
             position = attribute.position
             letter = self.get_letter_in_word(result)
             filter_type = result.split(' ')[-1]
-            FilterFactory.generate(filter_type).filtrate(position, letter)
+            (
+                self.words_list,
+                self.pattern_correct,
+                self.another_position,
+            ) = FilterFactory.generate(filter_type).filtrate(
+                position,
+                letter,
+                self.words_list,
+                self.pattern_correct,
+                self.another_position,
+                self.logger,
+            )
