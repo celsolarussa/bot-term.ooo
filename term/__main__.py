@@ -30,7 +30,8 @@ class Crawler:
     def send_letters_in_cells(self, cells: list, word: List) -> None:
         [cell.send_keys(letter) for cell, letter in zip(cells, word)]
 
-    def check_win(self, attributes: List[Cell]) -> bool:
+    @classmethod
+    def check_win(cls, attributes: List[Cell]) -> bool:
         for attribute in attributes:
             if 'correta' not in attribute.result:
                 return False
