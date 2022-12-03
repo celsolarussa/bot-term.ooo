@@ -98,7 +98,9 @@ class FilterFactory:
     }
 
     @staticmethod
-    def generate(filter_type: str) -> LetterCorrectPosition | LetterAnotherPosition | WrongLetter:
+    def generate(
+        filter_type: str,
+    ) -> LetterCorrectPosition | LetterAnotherPosition | WrongLetter:
         return FilterFactory.type[filter_type]()
 
 
@@ -117,8 +119,10 @@ class Filter:
         return False
 
     def get_popular_words(self, words_list: List[str]) -> List[str]:
-        return [i for i in words_list if self.check_duplicates_letters_in_word(i)]
-            
+        return [
+            i for i in words_list if self.check_duplicates_letters_in_word(i)
+        ]
+
     def get_random_word(self) -> str:
         if not self.words_list:
             raise FilterError()

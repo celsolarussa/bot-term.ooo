@@ -11,17 +11,19 @@ from term import (
     LOSE_FOLDER_DIR,
     WIN_FOLDER_DIR,
     WORDS_FILE_DIR,
+    utils,
 )
 from term.exceptions import Lose, Win
 from term.filter import Filter
 from term.logger import clear_handlers, get_loggers
 from term.page.elements import Term
-from term import utils
 from term.page.tools import Page
 
 
 class BoardWebElement:
-    def __init__(self, page: Term, board: WebElement, board_number: int) -> None:
+    def __init__(
+        self, page: Term, board: WebElement, board_number: int
+    ) -> None:
         self.actual_row_index = 0
         self.page = page
         self.board = board
@@ -82,11 +84,10 @@ class Crawler:
         Page.open(driver, self.page.url)
         self.page.close_help_screen()
         list_boards = self.page.get_boards()
-        board_instances = [BoardWebElement(
-            self.page,
-            board,
-            board_number
-        ) for board_number, board in enumerate(list_boards)]
+        board_instances = [
+            BoardWebElement(self.page, board, board_number)
+            for board_number, board in enumerate(list_boards)
+        ]
 
         for i in range(9):
             board = min(board_instances)

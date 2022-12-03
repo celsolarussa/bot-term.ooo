@@ -8,11 +8,11 @@ from selenium.webdriver.chrome.options import Options
 from term import (
     ERROR_FOLDER_DIR,
     EXCEPTION_FILE_DIR,
+    IMAGE_DIR,
     LOGS_FOLDER_DIR,
     LOSE_FOLDER_DIR,
     RESULT_FOLDER_DIR,
     WIN_FOLDER_DIR,
-    IMAGE_DIR,
 )
 
 
