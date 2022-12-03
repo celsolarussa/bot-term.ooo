@@ -3,31 +3,24 @@ import traceback
 from bdb import BdbQuit
 from typing import List
 
-from term import (
-    ERROR_FOLDER_DIR,
-    LOGS_FOLDER_DIR,
-    LOSE_FOLDER_DIR,
-    WIN_FOLDER_DIR,
-    WORDS_FILE_DIR,
-)
+from selenium.webdriver.remote.webelement import WebElement
+
+from term import (ERROR_FOLDER_DIR, LOGS_FOLDER_DIR, LOSE_FOLDER_DIR,
+                  WIN_FOLDER_DIR, WORDS_FILE_DIR)
 from term.exceptions import Lose, Win
 from term.filter import Filter
 from term.logger import clear_handlers, get_loggers
 from term.page.elements import Cell, Term
-from term.utils import (
-    create_project_folders,
-    get_driver,
-    get_words_list,
-    move_file_logs,
-    save_screen_image,
-)
+from term.utils import (create_project_folders, get_driver, get_words_list,
+                        move_file_logs, save_screen_image)
 
 
 class Crawler:
     def __init__(self, page_elements: Term) -> None:
         self.page = page_elements
 
-    def send_letters_in_cells(self, cells: list, word: List) -> None:
+    @classmethod
+    def send_letters_in_cells(cls, cells: List[WebElement], word: List) -> None:
         [cell.send_keys(letter) for cell, letter in zip(cells, word)]
 
     @classmethod
