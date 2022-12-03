@@ -1,12 +1,9 @@
-import logging
 from datetime import datetime
 from pathlib import Path
 from typing import List
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 
 from term import (
     ERROR_FOLDER_DIR,
@@ -25,19 +22,17 @@ def get_words_list(file_path: Path) -> List[str]:
         return words.split(' ')
 
 
-def get_driver():
+def get_driver() -> Chrome:
     options = Options()
     options.add_argument('--start-maximized')
     options.add_argument('--log-level=3')
-    service = Service(ChromeDriverManager(log_level=logging.WARNING).install())
     driver = Chrome(
-        service=service,
         options=options,
     )
     return driver
 
 
-def create_project_folders():
+def create_project_folders() -> None:
     RESULT_FOLDER_DIR.mkdir(exist_ok=True)
     ERROR_FOLDER_DIR.mkdir(exist_ok=True)
     LOSE_FOLDER_DIR.mkdir(exist_ok=True)
@@ -45,22 +40,22 @@ def create_project_folders():
     LOGS_FOLDER_DIR.mkdir(exist_ok=True)
 
 
-def get_files_path(folder_path):
+def get_files_path(folder_path: Path) -> list[Path]:
     files_path = list(Path(folder_path).resolve().iterdir())
     return files_path
 
 
-def move_file(file_path, file_name, destination_path):
+def move_file(file_path: Path, file_name: str, destination_path: Path) -> Path:
     _file_path = file_path.rename(destination_path / file_name)
     return _file_path
 
 
-def move_files(origin_path, destination_path):
+def move_files(origin_path: Path, destination_path: Path) -> None:
     files_path = get_files_path(origin_path)
     [move_file(i, i.name, destination_path) for i in files_path]
 
 
-def get_formatted_datetime(prefix='', suffix=''):
+def get_formatted_datetime(prefix: str = '', suffix: str = '') -> str:
     current_day_formatted = (
         str(datetime.now()).replace(':', '.').replace(' ', '_')
     )
@@ -68,7 +63,7 @@ def get_formatted_datetime(prefix='', suffix=''):
     return file_name
 
 
-def create_folder(destination, folder_name):
+def create_folder(destination: Path, folder_name: str) -> Path:
     folder_path = Path(destination / folder_name)
     folder_path.mkdir()
     return folder_path
