@@ -18,7 +18,6 @@ class Cell(BaseModel):
 
 
 class Term(SeleniumTools):
-    url = 'https://term.ooo/4/'
     div_help_locator = By.ID, 'help'
     wc_board = By.XPATH, '//wc-board'
     wc_rows = By.CSS_SELECTOR, 'wc-row'
