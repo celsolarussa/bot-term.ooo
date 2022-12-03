@@ -5,3 +5,5 @@ html
 result
 __pycache__
 logs
+notes.txt
+.idea
