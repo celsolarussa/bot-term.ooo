@@ -80,6 +80,6 @@ def move_file_logs(destinaton_path: Path, error: str = None) -> Path:
     return logs_folder_path
 
 
-def save_screen_image(destination_path: Path, driver: Chrome):
+def save_image_screen(destination_path: Path, driver: Chrome):
     driver.save_screenshot(IMAGE_DIR.name)
     move_file(IMAGE_DIR, IMAGE_DIR.name, destination_path)
