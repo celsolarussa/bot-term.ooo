@@ -18,7 +18,7 @@ class Cell(BaseModel):
 
 
 class Term(SeleniumTools):
-    url = 'https://term.ooo/2/'
+    url = 'https://term.ooo/4/'
     div_help_locator = By.ID, 'help'
     wc_board = By.XPATH, '//wc-board'
     wc_rows = By.CSS_SELECTOR, 'wc-row'
@@ -29,8 +29,6 @@ class Term(SeleniumTools):
 
     def __init__(self, driver: Remote) -> None:
         super().__init__(driver)
-        Page.open(driver, self.url)
-        self.close_help_screen()
 
     def close_help_screen(self) -> None:
         self.wait_element_located(locator=self.div_help_locator).click()
@@ -48,7 +46,8 @@ class Term(SeleniumTools):
             shadow_wc_rows, self.div_letters
         )
 
-    def get_word_in_cells(self, cells: List[WebElement]) -> str:
+    @staticmethod
+    def get_word_in_cells(cells: List[WebElement]) -> str:
         return unidecode(''.join([cell.text for cell in cells])).lower()
 
     def confirm_word(self) -> None:
@@ -58,7 +57,7 @@ class Term(SeleniumTools):
             shadow_wc_keyboard, self.keyboard_enter
         ).click()
 
-    def get_webelements_attribute(self, cells: List) -> List[str]:
+    def get_webelements_attribute(self, cells: List) -> list[Cell]:
         return [
             Cell(
                 result=self.wait_webelement_attribute(
