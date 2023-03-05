@@ -16,7 +16,6 @@ from term.exceptions import Lose, Win
 from term.filter import Filter
 from term.logger import clear_handlers, get_loggers
 from term.page.elements import Term
-from term.page.tools import Page
 
 
 class BoardWebElement:
@@ -81,13 +80,13 @@ class Crawler:
         self.url_page = 'https://term.ooo/4'
 
     def run(self):
-        Page.open(driver, self.url_page)
+        self.page._driver.get(self.url_page)
         self.page.close_help_screen()
         list_boards = self.page.get_boards()
         board_instances = [
             BoardWebElement(self.page, board, board_number)
-            for board_number, board in enumerate(list_boards)
-        ]
+            for board_number, board in enumerate(list_boards)]
+
         row = self.page.get_rows(board_instances[-1].board)
         for i in range(len(row)):
             board = min(board_instances)
