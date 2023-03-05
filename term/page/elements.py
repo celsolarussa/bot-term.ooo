@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from unidecode import unidecode
 
-from term.page.tools import Page, SeleniumTools
+from term.page.tools import SeleniumTools
 
 
 class Cell(BaseModel):
