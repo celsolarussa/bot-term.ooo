@@ -16,6 +16,7 @@ To change the game mode it is necessary to change the variable that stores the u
 
 ## Dependencies
 `python >= 3.8`
+`chromedriver`
 ## Install
 ```
 pip install -r requirements.txt
